@@ -3,16 +3,16 @@ package com.airtribe.learntrack.service;
 import com.airtribe.learntrack.entity.Student;
 import com.airtribe.learntrack.exception.EntityNotFoundException;
 import com.airtribe.learntrack.exception.InvalidInputException;
+import com.airtribe.learntrack.repository.StudentRepository;
 import com.airtribe.learntrack.util.IdGenerator;
 import com.airtribe.learntrack.util.InputValidator;
-import java.util.ArrayList;
 import java.util.List;
 
 public class StudentService {
-    private List<Student> students;
+    private StudentRepository studentRepository;
 
-    public StudentService() {
-        this.students = new ArrayList<>();
+    public StudentService(StudentRepository studentRepository) {
+        this.studentRepository = studentRepository;
     }
 
     public Student addStudent(String firstName, String lastName, String email, String batch)
@@ -24,7 +24,7 @@ public class StudentService {
 
         int id = IdGenerator.getNextStudentId();
         Student student = new Student(id, firstName, lastName, email, batch, true);
-        students.add(student);
+        studentRepository.save(student);
         return student;
     }
 
@@ -36,31 +36,20 @@ public class StudentService {
 
         int id = IdGenerator.getNextStudentId();
         Student student = new Student(id, firstName, lastName, batch, true);
-        students.add(student);
+        studentRepository.save(student);
         return student;
     }
 
     public Student findStudentById(int id) throws EntityNotFoundException {
-        for (Student student : students) {
-            if (student.getId() == id) {
-                return student;
-            }
-        }
-        throw new EntityNotFoundException("Student with ID " + id + " not found");
+        return studentRepository.findById(id);
     }
 
     public List<Student> getAllStudents() {
-        return new ArrayList<>(students);
+        return studentRepository.findAll();
     }
 
     public List<Student> getActiveStudents() {
-        List<Student> activeStudents = new ArrayList<>();
-        for (Student student : students) {
-            if (student.isActive()) {
-                activeStudents.add(student);
-            }
-        }
-        return activeStudents;
+        return studentRepository.findAllActive();
     }
 
     public void updateStudent(int id, String firstName, String lastName, String email, String batch)
@@ -75,20 +64,22 @@ public class StudentService {
         student.setLastName(lastName);
         student.setEmail(email);
         student.setBatch(batch);
+        studentRepository.update(student);
     }
 
     public void deactivateStudent(int id) throws EntityNotFoundException {
         Student student = findStudentById(id);
         student.setActive(false);
+        studentRepository.update(student);
     }
 
     public void activateStudent(int id) throws EntityNotFoundException {
         Student student = findStudentById(id);
         student.setActive(true);
+        studentRepository.update(student);
     }
 
     public void removeStudent(int id) throws EntityNotFoundException {
-        Student student = findStudentById(id);
-        students.remove(student);
+        studentRepository.delete(id);
     }
 }

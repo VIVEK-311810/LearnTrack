@@ -3,18 +3,19 @@ package com.airtribe.learntrack.service;
 import com.airtribe.learntrack.entity.Enrollment;
 import com.airtribe.learntrack.exception.EntityNotFoundException;
 import com.airtribe.learntrack.exception.InvalidInputException;
+import com.airtribe.learntrack.repository.EnrollmentRepository;
 import com.airtribe.learntrack.util.IdGenerator;
 import com.airtribe.learntrack.util.InputValidator;
-import java.util.ArrayList;
 import java.util.List;
 
 public class EnrollmentService {
-    private List<Enrollment> enrollments;
+    private EnrollmentRepository enrollmentRepository;
     private StudentService studentService;
     private CourseService courseService;
 
-    public EnrollmentService(StudentService studentService, CourseService courseService) {
-        this.enrollments = new ArrayList<>();
+    public EnrollmentService(EnrollmentRepository enrollmentRepository, StudentService studentService,
+            CourseService courseService) {
+        this.enrollmentRepository = enrollmentRepository;
         this.studentService = studentService;
         this.courseService = courseService;
     }
@@ -27,43 +28,26 @@ public class EnrollmentService {
 
         int id = IdGenerator.getNextEnrollmentId();
         Enrollment enrollment = new Enrollment(id, studentId, courseId, enrollmentDate, "ACTIVE");
-        enrollments.add(enrollment);
+        enrollmentRepository.save(enrollment);
         return enrollment;
     }
 
     public Enrollment findEnrollmentById(int id) throws EntityNotFoundException {
-        for (Enrollment enrollment : enrollments) {
-            if (enrollment.getId() == id) {
-                return enrollment;
-            }
-        }
-        throw new EntityNotFoundException("Enrollment with ID " + id + " not found");
+        return enrollmentRepository.findById(id);
     }
 
     public List<Enrollment> getEnrollmentsForStudent(int studentId) throws EntityNotFoundException {
         studentService.findStudentById(studentId);
-        List<Enrollment> studentEnrollments = new ArrayList<>();
-        for (Enrollment enrollment : enrollments) {
-            if (enrollment.getStudentId() == studentId) {
-                studentEnrollments.add(enrollment);
-            }
-        }
-        return studentEnrollments;
+        return enrollmentRepository.findByStudentId(studentId);
     }
 
     public List<Enrollment> getEnrollmentsForCourse(int courseId) throws EntityNotFoundException {
         courseService.findCourseById(courseId);
-        List<Enrollment> courseEnrollments = new ArrayList<>();
-        for (Enrollment enrollment : enrollments) {
-            if (enrollment.getCourseId() == courseId) {
-                courseEnrollments.add(enrollment);
-            }
-        }
-        return courseEnrollments;
+        return enrollmentRepository.findByCourseId(courseId);
     }
 
     public List<Enrollment> getAllEnrollments() {
-        return new ArrayList<>(enrollments);
+        return enrollmentRepository.findAll();
     }
 
     public void updateEnrollmentStatus(int enrollmentId, String newStatus)
@@ -71,20 +55,22 @@ public class EnrollmentService {
         Enrollment enrollment = findEnrollmentById(enrollmentId);
         InputValidator.validateNonEmptyString(newStatus, "Status");
         enrollment.setStatus(newStatus);
+        enrollmentRepository.update(enrollment);
     }
 
     public void cancelEnrollment(int enrollmentId) throws EntityNotFoundException {
         Enrollment enrollment = findEnrollmentById(enrollmentId);
         enrollment.setStatus("CANCELLED");
+        enrollmentRepository.update(enrollment);
     }
 
     public void completeEnrollment(int enrollmentId) throws EntityNotFoundException {
         Enrollment enrollment = findEnrollmentById(enrollmentId);
         enrollment.setStatus("COMPLETED");
+        enrollmentRepository.update(enrollment);
     }
 
     public void removeEnrollment(int enrollmentId) throws EntityNotFoundException {
-        Enrollment enrollment = findEnrollmentById(enrollmentId);
-        enrollments.remove(enrollment);
+        enrollmentRepository.delete(enrollmentId);
     }
 }
