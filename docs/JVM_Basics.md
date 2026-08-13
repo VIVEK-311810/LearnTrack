@@ -1,92 +1,25 @@
-# JVM Basics: Understanding Java's Runtime Environment
+**What is JDK, JRE, JVM**
 
-## What is JDK, JRE, and JVM?
+1. JDK i.e Java Development Kit is used to Java coding i.e write, compile and debug with inbuilt compiler and debugger.
 
-### JVM (Java Virtual Machine)
-The **Java Virtual Machine** is an abstract computing machine that allows a computer to run Java programs and programs written in other languages that are compiled to Java bytecode.
+2. JRE i.e Java Runtime Environment is the runtime package that provides the JVM (i.e virtual machine) and the Java libraries we use at runtime
 
-Key points:
-- It is a **virtual machine** that executes bytecode
-- It provides a platform-independent execution environment
-- Different JVMs exist for different operating systems (Windows, macOS, Linux)
-- The JVM is what makes "write once, run anywhere" possible
+3. JVM i.e Java Virtual Machine is the machine i.e engine that actually runs bytecode, manages memory, handles garbage collection.
 
-### JRE (Java Runtime Environment)
-The **Java Runtime Environment** is a package that contains everything needed to **run** Java applications. It includes:
-- The JVM (the core)
-- Java class libraries (standard API)
-- Other supporting files and utilities
+The JDK helps you build the program, the JRE provides what it needs to run, and the JVM is what actually executes it.
 
-**Use case:** If you only want to run Java programs (not develop), you need the JRE.
+To tell exactly the .java file will not run directly, first we compile it and get the bytecode ready (i.e stored in .class file) and the virtual machine(JVM) that actually runs/executes the byte code.
 
-### JDK (Java Development Kit)
-The **Java Development Kit** is a complete package for **developing** Java applications. It includes:
-- The JRE (everything in the Runtime Environment)
-- Development tools like `javac` (compiler), `jar`, `javadoc`, etc.
-- Source code for the Java class libraries
-- Debuggers and other development utilities
 
-**Use case:** If you want to write, compile, and run Java programs, you need the JDK.
+**What is bytecode**
 
-### Relationship:
-```
-JDK = JRE + Development Tools
-JRE = JVM + Class Libraries
-```
+Bytecode is the compiled code of .java code user coded with actual syntax, logic and comments. When JDK compiles it, the code is compiled into byte code i.e binary code that only machine can interpret. 
 
-## What is Bytecode?
+If you open the .class in IDE we can ibserve the decompiled verion of bytecode with actual structure where it executes in JVM. If you observe the below image, the .java file has comment and .class has default constructor and comment removed which explains what bytecode is i.e a perfectly compiled code of the .java coded by user in binary code i.e ready to execute by JVM.
 
-**Bytecode** is an intermediate, platform-independent representation of Java source code. Here's what happens:
+![alt text](image.png)
 
-1. You write a Java program in a `.java` file (human-readable source code)
-2. The Java compiler (`javac`) compiles it into **bytecode**
-3. Bytecode is stored in a `.class` file (not machine code, but a binary format)
-4. The JVM reads the `.class` file and **interprets/compiles** the bytecode into native machine code for the specific operating system
 
-**Example:**
-- Source code: `HelloWorld.java`
-- Bytecode: `HelloWorld.class` (the compiled bytecode)
-- Execution: JVM interprets `HelloWorld.class` and runs it
+**What does “write once, run anywhere” mean (1–2 short paragraphs)**
 
-Bytecode is the same regardless of operating system, which is why Java programs are portable.
-
-## "Write Once, Run Anywhere" (WORA)
-
-This is Java's key principle that means:
-
-**You write and compile your Java code once, and it can run on any machine that has a JVM installed.**
-
-**How it works:**
-1. A developer writes a Java program on Windows and compiles it to bytecode (`.class` files)
-2. The same bytecode can be executed on:
-   - A Linux machine (using the Linux JVM)
-   - A macOS machine (using the macOS JVM)
-   - Any other platform (Windows, Android, IoT devices, etc.)
-
-**Why?**
-- The bytecode is platform-independent
-- Each operating system has its own JVM implementation that understands bytecode
-- The JVM acts as an abstraction layer between your code and the underlying operating system
-
-**Example:**
-```
-Source Code (HelloWorld.java) → Compile → Bytecode (HelloWorld.class)
-                                              ↓
-                                         JVM on Windows
-                                         JVM on Linux
-                                         JVM on macOS
-                                         (All can run the same .class file)
-```
-
-This is different from languages like C++ where you compile to machine code specific to each operating system, meaning you need to recompile for each platform.
-
-## Summary
-
-| Component | Purpose | Includes |
-|-----------|---------|----------|
-| **JDK** | Development | JRE + compiler + tools |
-| **JRE** | Runtime | JVM + libraries |
-| **JVM** | Execution | Bytecode interpreter |
-| **Bytecode** | Intermediate form | `.class` files |
-
-Understanding these components helps you appreciate Java's portability and why it's been a dominant language for cross-platform development.
+*Write once* here means that we compile the code once and *Run anywhere* means we can run it anywhere. That is the compiled code .class can be run on any machine since JDK is same imn any machine.

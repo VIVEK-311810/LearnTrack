@@ -1,4 +1,4 @@
-package com.airtribe.learntrack.ui;
+﻿package com.airtribe.learntrack.ui;
 
 import com.airtribe.learntrack.entity.Course;
 import com.airtribe.learntrack.entity.Enrollment;
@@ -29,7 +29,7 @@ public class Main {
     private static void displayMainMenu() {
         boolean running = true;
         while (running) {
-            System.out.println("\n========== LearnTrack Management System ==========");
+            System.out.println("LearnTrack Management System");
             System.out.println("1. Student Management");
             System.out.println("2. Course Management");
             System.out.println("3. Enrollment Management");
@@ -50,13 +50,13 @@ public class Main {
                         break;
                     case 4:
                         running = false;
-                        System.out.println("Thank you for using LearnTrack. Goodbye!");
+                        System.out.println("End");
                         break;
                     default:
-                        System.out.println("Invalid option. Please try again.");
+                        System.out.println("Invalid try again.");
                 }
             } catch (NumberFormatException e) {
-                System.out.println("Invalid input. Please enter a valid number.");
+                System.out.println("Invalid input enter a valid number.");
             }
         }
     }
@@ -67,12 +67,9 @@ public class Main {
             System.out.println("\n========== Student Management ==========");
             System.out.println("1. Add new student");
             System.out.println("2. View all students");
-            System.out.println("3. View active students");
-            System.out.println("4. Search student by ID");
-            System.out.println("5. Update student");
-            System.out.println("6. Deactivate student");
-            System.out.println("7. Activate student");
-            System.out.println("8. Back to main menu");
+            System.out.println("3. Search student by ID");
+            System.out.println("4. Deactivate student");
+            System.out.println("5. Back to main menu");
             System.out.print("Select an option: ");
 
             try {
@@ -85,28 +82,19 @@ public class Main {
                         viewAllStudents();
                         break;
                     case 3:
-                        viewActiveStudents();
-                        break;
-                    case 4:
                         searchStudentById();
                         break;
-                    case 5:
-                        updateStudent();
-                        break;
-                    case 6:
+                    case 4:
                         deactivateStudent();
                         break;
-                    case 7:
-                        activateStudent();
-                        break;
-                    case 8:
+                    case 5:
                         inMenu = false;
                         break;
                     default:
-                        System.out.println("Invalid option. Please try again.");
+                        System.out.println("Invalid try again.");
                 }
             } catch (NumberFormatException e) {
-                System.out.println("Invalid input. Please enter a valid number.");
+                System.out.println("Invalid input enter a valid number.");
             }
         }
     }
@@ -245,12 +233,9 @@ public class Main {
             System.out.println("\n========== Course Management ==========");
             System.out.println("1. Add new course");
             System.out.println("2. View all courses");
-            System.out.println("3. View active courses");
-            System.out.println("4. Search course by ID");
-            System.out.println("5. Update course");
-            System.out.println("6. Deactivate course");
-            System.out.println("7. Activate course");
-            System.out.println("8. Back to main menu");
+            System.out.println("3. Deactivate course");
+            System.out.println("4. Activate course");
+            System.out.println("5. Back to main menu");
             System.out.print("Select an option: ");
 
             try {
@@ -263,21 +248,12 @@ public class Main {
                         viewAllCourses();
                         break;
                     case 3:
-                        viewActiveCourses();
-                        break;
-                    case 4:
-                        searchCourseById();
-                        break;
-                    case 5:
-                        updateCourse();
-                        break;
-                    case 6:
                         deactivateCourse();
                         break;
-                    case 7:
+                    case 4:
                         activateCourse();
                         break;
-                    case 8:
+                    case 5:
                         inMenu = false;
                         break;
                     default:
@@ -411,13 +387,10 @@ public class Main {
         while (inMenu) {
             System.out.println("\n========== Enrollment Management ==========");
             System.out.println("1. Enroll student in course");
-            System.out.println("2. View all enrollments");
-            System.out.println("3. View enrollments for a student");
-            System.out.println("4. View enrollments for a course");
-            System.out.println("5. Update enrollment status");
-            System.out.println("6. Complete enrollment");
-            System.out.println("7. Cancel enrollment");
-            System.out.println("8. Back to main menu");
+            System.out.println("2. View enrollments for a student");
+            System.out.println("3. Complete enrollment");
+            System.out.println("4. Cancel enrollment");
+            System.out.println("5. Back to main menu");
             System.out.print("Select an option: ");
 
             try {
@@ -427,24 +400,15 @@ public class Main {
                         enrollStudent();
                         break;
                     case 2:
-                        viewAllEnrollments();
-                        break;
-                    case 3:
                         viewEnrollmentsForStudent();
                         break;
-                    case 4:
-                        viewEnrollmentsForCourse();
-                        break;
-                    case 5:
-                        updateEnrollmentStatus();
-                        break;
-                    case 6:
+                    case 3:
                         completeEnrollment();
                         break;
-                    case 7:
+                    case 4:
                         cancelEnrollment();
                         break;
-                    case 8:
+                    case 5:
                         inMenu = false;
                         break;
                     default:

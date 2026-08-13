@@ -2,203 +2,50 @@
 LEARNTRACK - PROJECT STRUCTURE
 ================================================================================
 
-src/
-└── com/
-    └── airtribe/
-        └── learntrack/
-            │
-            ├── Main.java                          // Entry point - Menu-driven application
-            │
-            ├── entity/
-            │   ├── Person.java                    // Base class
-            │   ├── Student.java                   // Extends Person
-            │   ├── Course.java
-            │   └── Enrollment.java
-            │
-            ├── repository/                        // Data storage layer (in-memory)
-            │   ├── StudentRepository.java         // CRUD operations for Students
-            │   ├── CourseRepository.java          // CRUD operations for Courses
-            │   └── EnrollmentRepository.java      // CRUD operations for Enrollments
-            │
-            ├── service/                           // Business logic layer
-            │   ├── StudentService.java            // Uses StudentRepository
-            │   ├── CourseService.java             // Uses CourseRepository
-            │   └── EnrollmentService.java         // Uses EnrollmentRepository
-            │
-            ├── exception/
-            │   ├── EntityNotFoundException.java   // Thrown when entity not found
-            │   └── InvalidInputException.java     // Thrown when input is invalid
-            │
-            ├── util/
-            │   ├── IdGenerator.java               // Static ID generators for all entities
-            │   └── InputValidator.java            // Validates user input
-            │
-            ├── constants/                         // Application-wide constants
-            │   ├── MenuOptions.java               // Menu option constants
-            │   └── AppConstants.java              // App-wide message constants
-            │
-            └── enums/                             // Fixed values / states
-                ├── EnrollmentStatus.java          // ACTIVE, COMPLETED, CANCELLED
-                └── CourseStatus.java              // ACTIVE, INACTIVE, ARCHIVED
-
-================================================================================
-LAYERED ARCHITECTURE
-================================================================================
-
-UI Layer (Main.java)
-    ↓ (calls)
-Service Layer (StudentService, CourseService, EnrollmentService)
-    ↓ (uses)
-Repository Layer (StudentRepository, CourseRepository, EnrollmentRepository)
-    ↓ (manages)
-In-Memory Data (ArrayLists)
-
-================================================================================
-KEY DESIGN PATTERNS & PRINCIPLES
-================================================================================
-
-1. REPOSITORY PATTERN
-   - Repositories handle all data access
-   - Services use repositories for CRUD operations
-   - Abstracts data storage from business logic
-
-2. DEPENDENCY INJECTION
-   - Services receive repositories via constructor
-   - Makes services testable and loosely coupled
-   - Services don't create their own repositories
-
-3. SEPARATION OF CONCERNS
-   - Main: UI/Menu handling
-   - Service: Business logic
-   - Repository: Data storage
-   - Entity: Data models
-   - Util: Helper functions
-   - Constant: Configuration values
-
-4. OBJECT-ORIENTED PRINCIPLES
-   - Inheritance: Person → Student
-   - Encapsulation: Private fields + Getters/Setters
-   - Polymorphism: Method overriding in Student.getDisplayName()
-   - Exception Handling: Custom exceptions for error handling
-
-================================================================================
-CLASS RESPONSIBILITIES
-================================================================================
-
-ENTITY LAYER
-- Person.java
-  ├─ Fields: id, firstName, lastName, email
-  ├─ Methods: Getters/setters, getDisplayName()
-  └─ Responsibility: Data model for person-type entities
-
-- Student.java (extends Person)
-  ├─ Additional Fields: batch, active
-  ├─ Constructor Overloading: With/without email
-  ├─ Method Overriding: getDisplayName()
-  └─ Responsibility: Student-specific data
-
-- Course.java
-  ├─ Fields: id, courseName, description, durationInWeeks, active
-  └─ Responsibility: Course data model
-
-- Enrollment.java
-  ├─ Fields: id, studentId, courseId, enrollmentDate, status
-  └─ Responsibility: Enrollment relationship
-
-REPOSITORY LAYER
-- StudentRepository.java
-  ├─ Fields: List<Student> students
-  ├─ Methods: save(), findById(), findAll(), findAllActive(), update(), delete(), exists()
-  └─ Responsibility: Student data persistence
-
-- CourseRepository.java
-  ├─ Similar structure to StudentRepository
-  └─ Responsibility: Course data persistence
-
-- EnrollmentRepository.java
-  ├─ Methods: findByStudentId(), findByCourseId() (in addition to basic CRUD)
-  └─ Responsibility: Enrollment data persistence
-
-SERVICE LAYER
-- StudentService.java
-  ├─ Methods: addStudent(), findStudentById(), getAllStudents(), getActiveStudents(),
-  │          updateStudent(), deactivateStudent(), activateStudent(), removeStudent()
-  ├─ Uses: StudentRepository, InputValidator, IdGenerator
-  └─ Responsibility: Student business logic & validation
-
-- CourseService.java
-  ├─ Methods: addCourse(), findCourseById(), getAllCourses(), getActiveCourses(),
-  │          updateCourse(), deactivateCourse(), activateCourse(), removeCourse()
-  └─ Responsibility: Course business logic & validation
-
-- EnrollmentService.java
-  ├─ Methods: enrollStudent(), findEnrollmentById(), getEnrollmentsForStudent(),
-  │          getEnrollmentsForCourse(), getAllEnrollments(), updateEnrollmentStatus(),
-  │          cancelEnrollment(), completeEnrollment(), removeEnrollment()
-  └─ Responsibility: Enrollment business logic & validation
-
-UTILITY LAYER
-- IdGenerator.java
-  ├─ Static Fields: studentIdCounter (1000), courseIdCounter (2000), enrollmentIdCounter (3000)
-  ├─ Static Methods: getNextStudentId(), getNextCourseId(), getNextEnrollmentId()
-  └─ Responsibility: Unique ID generation across the application
-
-- InputValidator.java
-  ├─ Static Methods: validateEmail(), validateName(), validatePositiveInteger(), validateNonEmptyString()
-  └─ Responsibility: Input validation with custom exceptions
-
-CONSTANTS LAYER
-- MenuOptions.java
-  ├─ Constants for all menu options
-  └─ Responsibility: Centralized menu option values
-
-- AppConstants.java
-  ├─ App name, version, ID ranges, success/error messages
-  └─ Responsibility: Centralized application constants
-
-ENUMS LAYER
-- EnrollmentStatus.java
-  ├─ Values: ACTIVE, COMPLETED, CANCELLED
-  └─ Responsibility: Type-safe enrollment status
-
-- CourseStatus.java
-  ├─ Values: ACTIVE, INACTIVE, ARCHIVED
-  └─ Responsibility: Type-safe course status
-
-================================================================================
-DATA FLOW EXAMPLES
-================================================================================
-
-Add Student Flow:
-1. Main.java (UI) → User input
-2. StudentService.addStudent() → Validate input
-3. IdGenerator.getNextStudentId() → Generate unique ID
-4. StudentRepository.save() → Save to in-memory ArrayList
-5. Return Student object
-
-Find Student Flow:
-1. Main.java (UI) → User enters ID
-2. StudentService.findStudentById() → Business logic
-3. StudentRepository.findById() → Data access
-4. Throw EntityNotFoundException if not found
-5. Return Student object
-
-Update Enrollment Status Flow:
-1. Main.java (UI) → User enters enrollment ID and new status
-2. EnrollmentService.updateEnrollmentStatus() → Validate status
-3. EnrollmentRepository.findById() → Retrieve enrollment
-4. Enrollment.setStatus() → Update status
-5. EnrollmentRepository.update() → Persist to ArrayList
-6. Success message to user
-
-================================================================================
-COMPILATION & EXECUTION
-================================================================================
-
-Compile:
-  javac -d out $(find src -name "*.java")
-
-Run:
-  java -cp out com.airtribe.learntrack.Main
-
-================================================================================
+src/ 
+└── com/ 
+    └── airtribe/ 
+        └── learntrack/ 
+            ├── ui/
+            |   └── Main.java                 // Menu & application entry point 
+            │ 
+            ├── entity/ 
+            │   ├── Person.java 
+            │   ├── Student.java 
+            │   ├── Course.java 
+            │   └── Enrollment.java 
+            │ 
+            ├── repository/              // Data storage layer (in-memory) 
+            │   ├── StudentRepository.java 
+            │   ├── CourseRepository.java 
+            │   └── EnrollmentRepository.java 
+            │ 
+            ├── service/                 // Business logic layer 
+            │   ├── StudentService.java 
+            │   ├── CourseService.java 
+            │   └── EnrollmentService.java 
+            │ 
+            ├── exception/ 
+            │   ├── EntityNotFoundException.java 
+            │   └── InvalidInputException.java   // optional 
+            │ 
+            ├── util/ 
+            │   ├── IdGenerator.java 
+            │   └── InputValidator.java 
+            │ 
+            ├── constants/               // Application-wide constants 
+            │   ├── MenuOptions.java 
+            │   └── AppConstants.java 
+            │ 
+            └── enums/                   // Fixed values / states 
+                ├── EnrollmentStatus.java 
+                └── CourseStatus.java    // optional 
+ 
+ 
+ 
+5. Team Roles & Responsibilities (Example) 
+Member Responsibility Module(s) 
+1 Entities, constructors, inheritance, encapsulation entity/ 
+2 Services & business logic, menu flows service/, Main.java 
+3 Utilities, exceptions, documentation, README, docs util/, exception/, 
+docs/ 

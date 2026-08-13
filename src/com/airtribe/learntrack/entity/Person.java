@@ -1,4 +1,4 @@
-package com.airtribe.learntrack.entity;
+﻿package com.airtribe.learntrack.entity;
 
 public class Person {
     private int id;
@@ -13,12 +13,12 @@ public class Person {
         this.email = email;
     }
 
-    public int getId() {
-        return id;
-    }
-
     public void setId(int id) {
         this.id = id;
+    }
+
+    public int getId() {
+        return id;
     }
 
     public String getFirstName() {
