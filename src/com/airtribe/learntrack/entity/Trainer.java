@@ -20,11 +20,11 @@ public class Trainer extends Person {
         this.batch = batch;
     }
 
-    public int getBatch() {
+    public String getBatch() {
         return batch;
     }
 
-    public String getStatus() {
+    public boolean getStatus() {
         return active;
     }
 

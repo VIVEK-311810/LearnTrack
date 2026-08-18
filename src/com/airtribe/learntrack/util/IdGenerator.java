@@ -1,4 +1,4 @@
-﻿package com.airtribe.learntrack.util;
+package com.airtribe.learntrack.util;
 
 public class IdGenerator {
     private static int studentIdCounter = 0;
