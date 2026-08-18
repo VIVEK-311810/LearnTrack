@@ -1,13 +1,24 @@
-﻿package com.airtribe.learntrack.entity;
+package com.airtribe.learntrack.entity;
+
+import com.airtribe.learntrack.enums.EnrollmentStatus;
+import java.time.LocalDate;
 
 public class Enrollment {
-    private int id;
+    private final int id;
     private int studentId;
     private int courseId;
-    private String enrollmentDate;
-    private String status;
+    private LocalDate enrollmentDate;
+    private EnrollmentStatus status;
 
-    public Enrollment(int id, int studentId, int courseId, String enrollmentDate, String status) {
+    public Enrollment() {
+        this.id = -1;
+        this.studentId = -1;
+        this.courseId = -1;
+        this.enrollmentDate = null;
+        this.status = EnrollmentStatus.ACTIVE;
+    }
+
+    public Enrollment(int id, int studentId, int courseId, LocalDate enrollmentDate, EnrollmentStatus status) {
         this.id = id;
         this.studentId = studentId;
         this.courseId = courseId;
@@ -17,10 +28,6 @@ public class Enrollment {
 
     public int getId() {
         return id;
-    }
-
-    public void setId(int id) {
-        this.id = id;
     }
 
     public int getStudentId() {
@@ -39,19 +46,19 @@ public class Enrollment {
         this.courseId = courseId;
     }
 
-    public String getEnrollmentDate() {
+    public LocalDate getEnrollmentDate() {
         return enrollmentDate;
     }
 
-    public void setEnrollmentDate(String enrollmentDate) {
+    public void setEnrollmentDate(LocalDate enrollmentDate) {
         this.enrollmentDate = enrollmentDate;
     }
 
-    public String getStatus() {
+    public EnrollmentStatus getStatus() {
         return status;
     }
 
-    public void setStatus(String status) {
+    public void setStatus(EnrollmentStatus status) {
         this.status = status;
     }
 }

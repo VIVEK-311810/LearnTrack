@@ -29,7 +29,7 @@ This project is intentionally kept focused on fundamentals without advanced topi
 1. Open terminal in project root.
 2. Compile:
    ```bash
-   javac -d out $(find . -name "*.java")
+   javac -d out $(find src -name "*.java")
    ```
 3. Run:
    ```bash

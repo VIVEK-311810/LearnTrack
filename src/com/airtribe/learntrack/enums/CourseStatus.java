@@ -1,5 +1,7 @@
-﻿package com.airtribe.learntrack.enums;
+package com.airtribe.learntrack.enums;
 
 public enum CourseStatus {
-    ACTIVE, INACTIVE, ARCHIVED
+    ACTIVE,
+    INACTIVE,
+    ARCHIVED
 }

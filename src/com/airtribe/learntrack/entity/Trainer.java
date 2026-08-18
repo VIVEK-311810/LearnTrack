@@ -1,39 +1,33 @@
 package com.airtribe.learntrack.entity;
 
 public class Trainer extends Person {
-    private String batch;
+    private String specialization;
     private boolean active;
 
-    public Trainer(int id, String firstName, String lastName, String email, String batch, boolean active) {
+    public Trainer(int id, String firstName, String lastName, String email, String specialization, boolean active) {
         super(id, firstName, lastName, email);
-        this.batch = batch;
+        this.specialization = specialization;
         this.active = active;
     }
 
-    public Trainer(int id, String firstName, String lastName, String batch, boolean active) {
-        super(id, firstName, lastName, "-");
-        this.batch = batch;
-        this.active = active;
+    public String getSpecialization() {
+        return specialization;
     }
 
-    public void setBatch(String batch) {
-        this.batch = batch;
+    public void setSpecialization(String specialization) {
+        this.specialization = specialization;
     }
 
-    public int getBatch() {
-        return batch;
-    }
-
-    public String getStatus() {
+    public boolean isActive() {
         return active;
     }
 
-    public void setStatus(boolean status) {
-        this.active = status;
+    public void setActive(boolean active) {
+        this.active = active;
     }
 
     @Override
     public String getDisplayName() {
-        return "Trainer: " + super.getDisplayName();
+        return super.getDisplayName() + " [" + specialization + "]";
     }
 }
