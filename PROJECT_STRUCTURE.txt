@@ -1,0 +1,51 @@
+================================================================================
+LEARNTRACK - PROJECT STRUCTURE
+================================================================================
+
+src/ 
+└── com/ 
+    └── airtribe/ 
+        └── learntrack/ 
+            ├── ui/
+            |   └── Main.java                 // Menu & application entry point 
+            │ 
+            ├── entity/ 
+            │   ├── Person.java 
+            │   ├── Student.java 
+            │   ├── Course.java 
+            │   └── Enrollment.java 
+            │ 
+            ├── repository/              // Data storage layer (in-memory) 
+            │   ├── StudentRepository.java 
+            │   ├── CourseRepository.java 
+            │   └── EnrollmentRepository.java 
+            │ 
+            ├── service/                 // Business logic layer 
+            │   ├── StudentService.java 
+            │   ├── CourseService.java 
+            │   └── EnrollmentService.java 
+            │ 
+            ├── exception/ 
+            │   ├── EntityNotFoundException.java 
+            │   └── InvalidInputException.java   // optional 
+            │ 
+            ├── util/ 
+            │   ├── IdGenerator.java 
+            │   └── InputValidator.java 
+            │ 
+            ├── constants/               // Application-wide constants 
+            │   ├── MenuOptions.java 
+            │   └── AppConstants.java 
+            │ 
+            └── enums/                   // Fixed values / states 
+                ├── EnrollmentStatus.java 
+                └── CourseStatus.java    // optional 
+ 
+ 
+ 
+5. Team Roles & Responsibilities (Example) 
+Member Responsibility Module(s) 
+1 Entities, constructors, inheritance, encapsulation entity/ 
+2 Services & business logic, menu flows service/, Main.java 
+3 Utilities, exceptions, documentation, README, docs util/, exception/, 
+docs/ 
