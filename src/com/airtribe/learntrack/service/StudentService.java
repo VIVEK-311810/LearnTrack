@@ -1,85 +1,79 @@
-﻿package com.airtribe.learntrack.service;
+package com.airtribe.learntrack.service;
 
 import com.airtribe.learntrack.entity.Student;
 import com.airtribe.learntrack.exception.EntityNotFoundException;
 import com.airtribe.learntrack.exception.InvalidInputException;
+import com.airtribe.learntrack.repository.StudentRepository;
 import com.airtribe.learntrack.util.IdGenerator;
 import com.airtribe.learntrack.util.InputValidator;
-import java.util.ArrayList;
 import java.util.List;
 
 public class StudentService {
-    private List<Student> students;
+    private StudentRepository repository;
 
     public StudentService() {
-        this.students = new ArrayList<>();
+        this.repository = new StudentRepository();
     }
 
-    public Student addStudent(String firstName, String lastName, String email, String batch) {
+    public Student addStudent(String firstName, String lastName, String email, String batch) throws InvalidInputException {
+        InputValidator.validateName(firstName, "First name");
+        InputValidator.validateName(lastName, "Last name");
+        InputValidator.validateName(batch, "Batch");
+        InputValidator.validateEmail(email);
+
         int id = IdGenerator.getNextStudentId();
-        Student student = new Student(id, firstName, lastName, email, batch, true);
-        students.add(student);
+        Student student = new Student(id, firstName.trim(), lastName.trim(), email.trim(), batch.trim(), true);
+        repository.save(student);
         return student;
     }
 
-    // Overloading
-    public Student addStudent(String firstName, String lastName, String batch) {
-        int id = IdGenerator.getNextStudentId();
-        Student student = new Student(id, firstName, lastName, batch, true);
-        students.add(student);
-        return student;
+    public Student addStudent(String firstName, String lastName, String batch) throws InvalidInputException {
+        return addStudent(firstName, lastName, "", batch);
     }
 
-    // public Student findStudentById(int id) {
-    // for (Student student : students) {
-    // if (student.getId() == id) {
-    // return student;
-    // }
-    // }
-    // throw new EntityNotFoundException("Student with ID " + id + " not found");
-    // }
+    public Student findStudentById(int id) throws EntityNotFoundException {
+        return repository.findById(id);
+    }
 
     public List<Student> getAllStudents() {
-        return new ArrayList<>(students);
+        return repository.findAll();
     }
 
-    // public List<Student> getActiveStudents() {
-    // List<Student> activeStudents = new ArrayList<>();
-    // for (Student student : students) {
-    // if (student.isActive()) {
-    // activeStudents.add(student);
-    // }
-    // }
-    // return activeStudents;
-    // }
-
-    public void updateStudent(int id, String firstName, String lastName, String email, String batch) {
-        for (Student student : students) {
-            if (student.getId() == id) {
-                student.setFirstName(firstName);
-                student.setLastName(lastName);
-                student.setEmail(email);
-                student.setBatch(batch);
-                return;
-            }
-        }
+    public List<Student> getActiveStudents() {
+        return repository.findAllActive();
     }
 
-    // public void deactivateStudent(int id) {
-    // Student student = findStudentById(id);
-    // student.setActive(false);
-    // }
+    public void updateStudent(int id, String firstName, String lastName, String email, String batch) throws EntityNotFoundException, InvalidInputException {
+        Student student = findStudentById(id);
 
-    // public void activateStudent(int id) {
-    // Student student = findStudentById(id);
-    // student.setActive(true);
-
-    public void removeStudent(int id) throws EntityNotFoundException {
-        for (Student student : students) {
-            if (student.getId() == id) {
-                students.remove(student);
-                return;
-            }
+        if (firstName != null && !firstName.trim().isEmpty()) {
+            student.setFirstName(firstName.trim());
         }
+        if (lastName != null && !lastName.trim().isEmpty()) {
+            student.setLastName(lastName.trim());
+        }
+        if (email != null && !email.trim().isEmpty()) {
+            InputValidator.validateEmail(email);
+            student.setEmail(email.trim());
+        }
+        if (batch != null && !batch.trim().isEmpty()) {
+            student.setBatch(batch.trim());
+        }
+
+        repository.update(student);
+    }
+
+    public void deactivateStudent(int id) throws EntityNotFoundException {
+        setStudentActive(id, false);
+    }
+
+    public void activateStudent(int id) throws EntityNotFoundException {
+        setStudentActive(id, true);
+    }
+
+    private void setStudentActive(int id, boolean active) throws EntityNotFoundException {
+        Student student = findStudentById(id);
+        student.setActive(active);
+        repository.update(student);
     }
 }

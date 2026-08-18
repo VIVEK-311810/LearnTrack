@@ -1,5 +1,4 @@
-﻿package com.airtribe.learntrack.repository;
+package com.airtribe.learntrack.repository;
 
-public class CourseRepository {
-    // CRUD operations for Courses
+public class CourseRepository extends BaseRepository {
 }

@@ -20,16 +20,16 @@ public class Student extends Person {
         this.batch = batch;
     }
 
-    public int getBatch() {
+    public String getBatch() {
         return batch;
     }
 
-    public String getStatus() {
+    public boolean isActive() {
         return active;
     }
 
-    public void setStatus(boolean status) {
-        this.active = status;
+    public void setActive(boolean active) {
+        this.active = active;
     }
 
     @Override

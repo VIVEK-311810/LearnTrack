@@ -1,5 +1,7 @@
-﻿package com.airtribe.learntrack.exception;
+package com.airtribe.learntrack.exception;
 
 public class InvalidInputException extends Exception {
-    // Thrown when input is invalid
+    public InvalidInputException(String message) {
+        super(message);
+    }
 }
