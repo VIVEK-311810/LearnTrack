@@ -1,13 +1,16 @@
-﻿package com.airtribe.learntrack.entity;
+package com.airtribe.learntrack.entity;
 
 public class Course {
-    private int id;
+    private final int id;
     private String courseName;
     private String description;
     private int durationInWeeks;
     private boolean active;
 
     public Course(int id, String courseName, String description, int durationInWeeks, boolean active) {
+        if (durationInWeeks <= 0) {
+            throw new IllegalArgumentException("Duration must be greater than 0");
+        }
         this.id = id;
         this.courseName = courseName;
         this.description = description;
@@ -17,10 +20,6 @@ public class Course {
 
     public int getId() {
         return id;
-    }
-
-    public void setId(int id) {
-        this.id = id;
     }
 
     public String getCourseName() {
@@ -44,6 +43,9 @@ public class Course {
     }
 
     public void setDurationInWeeks(int durationInWeeks) {
+        if (durationInWeeks <= 0) {
+            throw new IllegalArgumentException("Duration must be greater than 0");
+        }
         this.durationInWeeks = durationInWeeks;
     }
 

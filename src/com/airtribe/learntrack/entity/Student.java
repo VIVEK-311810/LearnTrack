@@ -1,4 +1,4 @@
-﻿package com.airtribe.learntrack.entity;
+package com.airtribe.learntrack.entity;
 
 public class Student extends Person {
     private String batch;
@@ -11,17 +11,17 @@ public class Student extends Person {
     }
 
     public Student(int id, String firstName, String lastName, String batch, boolean active) {
-        super(id, firstName, lastName, "-");
+        super(id, firstName, lastName, "");
         this.batch = batch;
         this.active = active;
     }
 
-    public void setBatch(String batch) {
-        this.batch = batch;
-    }
-
     public String getBatch() {
         return batch;
+    }
+
+    public void setBatch(String batch) {
+        this.batch = batch;
     }
 
     public boolean isActive() {
@@ -33,7 +33,7 @@ public class Student extends Person {
     }
 
     @Override
-    public String displayName() {
-        return "Student: " + super.getDisplayName();
+    public String getDisplayName() {
+        return super.getDisplayName() + " [" + batch + "]";
     }
 }
