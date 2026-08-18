@@ -33,5 +33,5 @@ This project is intentionally kept focused on fundamentals without advanced topi
    ```
 3. Run:
    ```bash
-   java -cp out com.airtribe.learntrack.Main
+   java -cp out com.airtribe.learntrack.ui.Main
    ```
