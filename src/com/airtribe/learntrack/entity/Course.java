@@ -1,13 +1,16 @@
 package com.airtribe.learntrack.entity;
 
+import com.airtribe.learntrack.enums.CourseStatus;
+
 public class Course {
     private final int id;
     private String courseName;
     private String description;
     private int durationInWeeks;
-    private boolean active;
+    private CourseStatus status;
+    private int trainerId;
 
-    public Course(int id, String courseName, String description, int durationInWeeks, boolean active) {
+    public Course(int id, String courseName, String description, int durationInWeeks, CourseStatus status) {
         if (durationInWeeks <= 0) {
             throw new IllegalArgumentException("Duration must be greater than 0");
         }
@@ -15,7 +18,8 @@ public class Course {
         this.courseName = courseName;
         this.description = description;
         this.durationInWeeks = durationInWeeks;
-        this.active = active;
+        this.status = status;
+        this.trainerId = -1;
     }
 
     public int getId() {
@@ -49,11 +53,27 @@ public class Course {
         this.durationInWeeks = durationInWeeks;
     }
 
+    public CourseStatus getStatus() {
+        return status;
+    }
+
+    public void setStatus(CourseStatus status) {
+        this.status = status;
+    }
+
+    public int getTrainerId() {
+        return trainerId;
+    }
+
+    public void setTrainerId(int trainerId) {
+        this.trainerId = trainerId;
+    }
+
     public boolean isActive() {
-        return active;
+        return status == CourseStatus.ACTIVE;
     }
 
     public void setActive(boolean active) {
-        this.active = active;
+        this.status = active ? CourseStatus.ACTIVE : CourseStatus.INACTIVE;
     }
 }

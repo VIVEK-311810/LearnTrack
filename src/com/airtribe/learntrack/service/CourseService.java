@@ -1,6 +1,7 @@
 package com.airtribe.learntrack.service;
 
 import com.airtribe.learntrack.entity.Course;
+import com.airtribe.learntrack.enums.CourseStatus;
 import com.airtribe.learntrack.exception.EntityNotFoundException;
 import com.airtribe.learntrack.exception.InvalidInputException;
 import com.airtribe.learntrack.repository.CourseRepository;
@@ -15,13 +16,14 @@ public class CourseService {
         this.repository = repository;
     }
 
-    public Course addCourse(String courseName, String description, int durationInWeeks) throws InvalidInputException {
-        InputValidator.validateName(courseName, "Course name");
-        InputValidator.validateName(description, "Description");
+    public Course addCourse(String courseName, String description, int durationInWeeks)
+            throws InvalidInputException {
+        InputValidator.validateNonEmptyString(courseName, "Course name");
+        InputValidator.validateNonEmptyString(description, "Description");
         InputValidator.validatePositiveNumber(durationInWeeks, "Duration");
 
         int id = IdGenerator.getNextCourseId();
-        Course course = new Course(id, courseName.trim(), description.trim(), durationInWeeks, true);
+        Course course = new Course(id, courseName, description, durationInWeeks, CourseStatus.ACTIVE);
         repository.save(course);
         return course;
     }
@@ -38,33 +40,39 @@ public class CourseService {
         return repository.findAllActive();
     }
 
-    public void updateCourse(int id, String courseName, String description, int durationInWeeks) throws EntityNotFoundException, InvalidInputException {
+    public void updateCourse(int id, String courseName, String description, int durationInWeeks)
+            throws EntityNotFoundException, InvalidInputException {
         Course course = findCourseById(id);
+        InputValidator.validateNonEmptyString(courseName, "Course name");
+        InputValidator.validateNonEmptyString(description, "Description");
+        InputValidator.validatePositiveNumber(durationInWeeks, "Duration");
 
-        if (courseName != null && !courseName.trim().isEmpty()) {
-            course.setCourseName(courseName.trim());
-        }
-        if (description != null && !description.trim().isEmpty()) {
-            course.setDescription(description.trim());
-        }
-        if (durationInWeeks > 0) {
-            course.setDurationInWeeks(durationInWeeks);
-        }
-
+        course.setCourseName(courseName);
+        course.setDescription(description);
+        course.setDurationInWeeks(durationInWeeks);
         repository.update(course);
     }
 
     public void deactivateCourse(int id) throws EntityNotFoundException {
-        setCourseActive(id, false);
+        Course course = findCourseById(id);
+        course.setStatus(CourseStatus.INACTIVE);
+        repository.update(course);
     }
 
     public void activateCourse(int id) throws EntityNotFoundException {
-        setCourseActive(id, true);
+        Course course = findCourseById(id);
+        course.setStatus(CourseStatus.ACTIVE);
+        repository.update(course);
     }
 
-    private void setCourseActive(int id, boolean active) throws EntityNotFoundException {
+    public void archiveCourse(int id) throws EntityNotFoundException {
         Course course = findCourseById(id);
-        course.setActive(active);
+        course.setStatus(CourseStatus.ARCHIVED);
         repository.update(course);
+    }
+
+    public void removeCourse(int id) throws EntityNotFoundException {
+        Course course = findCourseById(id);
+        repository.delete(course);
     }
 }

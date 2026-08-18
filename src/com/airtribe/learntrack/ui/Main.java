@@ -5,13 +5,17 @@ import com.airtribe.learntrack.constants.MenuOptions;
 import com.airtribe.learntrack.entity.Student;
 import com.airtribe.learntrack.entity.Course;
 import com.airtribe.learntrack.entity.Enrollment;
+import com.airtribe.learntrack.entity.Trainer;
 import com.airtribe.learntrack.enums.EnrollmentStatus;
+import com.airtribe.learntrack.enums.CourseStatus;
 import com.airtribe.learntrack.repository.StudentRepository;
 import com.airtribe.learntrack.repository.CourseRepository;
 import com.airtribe.learntrack.repository.EnrollmentRepository;
+import com.airtribe.learntrack.repository.TrainerRepository;
 import com.airtribe.learntrack.service.StudentService;
 import com.airtribe.learntrack.service.CourseService;
 import com.airtribe.learntrack.service.EnrollmentService;
+import com.airtribe.learntrack.service.TrainerService;
 import com.airtribe.learntrack.exception.EntityNotFoundException;
 import com.airtribe.learntrack.exception.InvalidInputException;
 import java.util.List;
@@ -21,6 +25,7 @@ public class Main {
     private static StudentService studentService;
     private static CourseService courseService;
     private static EnrollmentService enrollmentService;
+    private static TrainerService trainerService;
     private static Scanner scanner;
 
     public static void main(String[] args) {
@@ -33,9 +38,11 @@ public class Main {
         StudentRepository studentRepository = new StudentRepository();
         CourseRepository courseRepository = new CourseRepository();
         EnrollmentRepository enrollmentRepository = new EnrollmentRepository();
+        TrainerRepository trainerRepository = new TrainerRepository();
 
         studentService = new StudentService(studentRepository);
         courseService = new CourseService(courseRepository);
+        trainerService = new TrainerService(trainerRepository);
         enrollmentService = new EnrollmentService(enrollmentRepository, studentService, courseService);
 
         scanner = new Scanner(System.in);
@@ -47,37 +54,45 @@ public class Main {
 
         boolean running = true;
         while (running) {
-            System.out.println("1. Manage Students");
-            System.out.println("2. Manage Courses");
-            System.out.println("3. Manage Enrollments");
-            System.out.println("4. View All Students");
-            System.out.println("5. View All Courses");
-            System.out.println("6. View All Enrollments");
-            System.out.println("7. Exit");
+            System.out.println(MenuOptions.STUDENT_MANAGEMENT + ". Manage Students");
+            System.out.println(MenuOptions.COURSE_MANAGEMENT + ". Manage Courses");
+            System.out.println(MenuOptions.ENROLLMENT_MANAGEMENT + ". Manage Enrollments");
+            System.out.println("4. Manage Trainers");
+            System.out.println("5. View All Students");
+            System.out.println("6. View All Courses");
+            System.out.println("7. View All Trainers");
+            System.out.println("8. View All Enrollments");
+            System.out.println("9. Exit");
             System.out.print("Select option: ");
 
             try {
                 int choice = Integer.parseInt(scanner.nextLine());
                 switch (choice) {
-                    case 1:
+                    case MenuOptions.STUDENT_MANAGEMENT:
                         studentMenu();
                         break;
-                    case 2:
+                    case MenuOptions.COURSE_MANAGEMENT:
                         courseMenu();
                         break;
-                    case 3:
+                    case MenuOptions.ENROLLMENT_MANAGEMENT:
                         enrollmentMenu();
                         break;
                     case 4:
-                        viewAllStudents();
+                        trainerMenu();
                         break;
                     case 5:
-                        viewAllCourses();
+                        viewAllStudents();
                         break;
                     case 6:
-                        viewAllEnrollments();
+                        viewAllCourses();
                         break;
                     case 7:
+                        viewAllTrainers();
+                        break;
+                    case 8:
+                        viewAllEnrollments();
+                        break;
+                    case 9:
                         running = false;
                         System.out.println(AppConstants.GOODBYE_MESSAGE);
                         break;
@@ -92,24 +107,20 @@ public class Main {
 
     private static void studentMenu() {
         System.out.println("\n--- Student Management ---");
-        System.out.println("1. Add Student");
-        System.out.println("2. Search Student by ID");
-        System.out.println("3. Back");
+        System.out.println(MenuOptions.ADD_STUDENT + ". Add Student");
+        System.out.println(MenuOptions.SEARCH_STUDENT + ". Search Student by ID");
+        System.out.println(MenuOptions.BACK_STUDENT + ". Back");
         System.out.print("Select: ");
 
         try {
             int choice = Integer.parseInt(scanner.nextLine());
             switch (choice) {
-                case 1:
+                case MenuOptions.ADD_STUDENT:
                     addStudent();
                     break;
-                case 2:
+                case MenuOptions.SEARCH_STUDENT:
                     searchStudent();
                     break;
-                case 3:
-                    break;
-                default:
-                    System.out.println(AppConstants.INVALID_OPTION);
             }
         } catch (NumberFormatException e) {
             System.out.println(AppConstants.INVALID_INPUT);
@@ -154,24 +165,24 @@ public class Main {
 
     private static void courseMenu() {
         System.out.println("\n--- Course Management ---");
-        System.out.println("1. Add Course");
-        System.out.println("2. Search Course by ID");
-        System.out.println("3. Back");
+        System.out.println(MenuOptions.ADD_COURSE + ". Add Course");
+        System.out.println(MenuOptions.SEARCH_COURSE + ". Search Course by ID");
+        System.out.println(MenuOptions.UPDATE_COURSE + ". Assign Trainer to Course");
+        System.out.println(MenuOptions.BACK_COURSE + ". Back");
         System.out.print("Select: ");
 
         try {
             int choice = Integer.parseInt(scanner.nextLine());
             switch (choice) {
-                case 1:
+                case MenuOptions.ADD_COURSE:
                     addCourse();
                     break;
-                case 2:
+                case MenuOptions.SEARCH_COURSE:
                     searchCourse();
                     break;
-                case 3:
+                case MenuOptions.UPDATE_COURSE:
+                    assignTrainerToCourse();
                     break;
-                default:
-                    System.out.println(AppConstants.INVALID_OPTION);
             }
         } catch (NumberFormatException e) {
             System.out.println(AppConstants.INVALID_INPUT);
@@ -206,7 +217,8 @@ public class Main {
             System.out.println("Name: " + course.getCourseName());
             System.out.println("Description: " + course.getDescription());
             System.out.println("Duration: " + course.getDurationInWeeks() + " weeks");
-            System.out.println("Active: " + course.isActive());
+            System.out.println("Status: " + course.getStatus());
+            System.out.println("Trainer ID: " + (course.getTrainerId() == -1 ? "Not assigned" : course.getTrainerId()));
         } catch (NumberFormatException e) {
             System.out.println(AppConstants.INVALID_ID_FORMAT);
         } catch (EntityNotFoundException e) {
@@ -214,56 +226,105 @@ public class Main {
         }
     }
 
-    private static void viewAllStudents() {
-        List<Student> students = studentService.getAllStudents();
-        if (students.isEmpty()) {
-            System.out.println("\n" + AppConstants.NO_STUDENTS);
-        } else {
-            System.out.println("\n--- All Students ---");
-            for (Student student : students) {
-                System.out.println("ID: " + student.getId() + " | " + student.getDisplayName() +
-                                 " | Batch: " + student.getBatch() + " | Active: " + student.isActive());
-            }
+    private static void assignTrainerToCourse() {
+        try {
+            System.out.print("Course ID: ");
+            int courseId = Integer.parseInt(scanner.nextLine());
+            System.out.print("Trainer ID: ");
+            int trainerId = Integer.parseInt(scanner.nextLine());
+
+            Course course = courseService.findCourseById(courseId);
+            Trainer trainer = trainerService.findTrainerById(trainerId);
+
+            course.setTrainerId(trainerId);
+            courseService.updateCourse(courseId, course.getCourseName(), course.getDescription(), course.getDurationInWeeks());
+
+            System.out.println("Trainer " + trainer.getDisplayName() + " assigned to course " + course.getCourseName());
+        } catch (NumberFormatException e) {
+            System.out.println(AppConstants.INVALID_INPUT);
+        } catch (EntityNotFoundException | InvalidInputException e) {
+            System.out.println("Error: " + e.getMessage());
         }
     }
 
-    private static void viewAllCourses() {
-        List<Course> courses = courseService.getAllCourses();
-        if (courses.isEmpty()) {
-            System.out.println("\n" + AppConstants.NO_COURSES);
-        } else {
-            System.out.println("\n--- All Courses ---");
-            for (Course course : courses) {
-                System.out.println("ID: " + course.getId() + " | " + course.getCourseName() +
-                                 " | Duration: " + course.getDurationInWeeks() + " weeks | Active: " + course.isActive());
-            }
-        }
-    }
-
-    private static void enrollmentMenu() {
-        System.out.println("\n--- Enrollment Management ---");
-        System.out.println("1. Enroll Student in Course");
-        System.out.println("2. View Enrollments for Student");
-        System.out.println("3. Update Enrollment Status");
-        System.out.println("4. Back");
+    private static void trainerMenu() {
+        System.out.println("\n--- Trainer Management ---");
+        System.out.println("1. Add Trainer");
+        System.out.println("2. Search Trainer by ID");
+        System.out.println("3. Back");
         System.out.print("Select: ");
 
         try {
             int choice = Integer.parseInt(scanner.nextLine());
             switch (choice) {
                 case 1:
-                    enrollStudent();
+                    addTrainer();
                     break;
                 case 2:
+                    searchTrainer();
+                    break;
+            }
+        } catch (NumberFormatException e) {
+            System.out.println(AppConstants.INVALID_INPUT);
+        }
+    }
+
+    private static void addTrainer() {
+        try {
+            System.out.print("First Name: ");
+            String firstName = scanner.nextLine();
+            System.out.print("Last Name: ");
+            String lastName = scanner.nextLine();
+            System.out.print("Email: ");
+            String email = scanner.nextLine();
+            System.out.print("Specialization: ");
+            String specialization = scanner.nextLine();
+
+            Trainer trainer = trainerService.addTrainer(firstName, lastName, email, specialization);
+            System.out.println("Trainer added successfully. ID: " + trainer.getId());
+        } catch (InvalidInputException e) {
+            System.out.println("Error: " + e.getMessage());
+        }
+    }
+
+    private static void searchTrainer() {
+        try {
+            System.out.print("Enter Trainer ID: ");
+            int id = Integer.parseInt(scanner.nextLine());
+            Trainer trainer = trainerService.findTrainerById(id);
+            System.out.println("\n--- Trainer Found ---");
+            System.out.println("ID: " + trainer.getId());
+            System.out.println("Name: " + trainer.getDisplayName());
+            System.out.println("Email: " + trainer.getEmail());
+            System.out.println("Specialization: " + trainer.getSpecialization());
+            System.out.println("Active: " + trainer.isActive());
+        } catch (NumberFormatException e) {
+            System.out.println(AppConstants.INVALID_ID_FORMAT);
+        } catch (EntityNotFoundException e) {
+            System.out.println("Error: " + e.getMessage());
+        }
+    }
+
+    private static void enrollmentMenu() {
+        System.out.println("\n--- Enrollment Management ---");
+        System.out.println(MenuOptions.ENROLL_STUDENT + ". Enroll Student in Course");
+        System.out.println(MenuOptions.VIEW_ENROLLMENTS_STUDENT + ". View Enrollments for Student");
+        System.out.println(MenuOptions.UPDATE_ENROLLMENT_STATUS + ". Update Enrollment Status");
+        System.out.println(MenuOptions.BACK_ENROLLMENT + ". Back");
+        System.out.print("Select: ");
+
+        try {
+            int choice = Integer.parseInt(scanner.nextLine());
+            switch (choice) {
+                case MenuOptions.ENROLL_STUDENT:
+                    enrollStudent();
+                    break;
+                case MenuOptions.VIEW_ENROLLMENTS_STUDENT:
                     viewStudentEnrollments();
                     break;
-                case 3:
+                case MenuOptions.UPDATE_ENROLLMENT_STATUS:
                     updateEnrollmentStatus();
                     break;
-                case 4:
-                    break;
-                default:
-                    System.out.println(AppConstants.INVALID_OPTION);
             }
         } catch (NumberFormatException e) {
             System.out.println(AppConstants.INVALID_INPUT);
@@ -323,6 +384,46 @@ public class Main {
             System.out.println(AppConstants.INVALID_INPUT);
         } catch (EntityNotFoundException | InvalidInputException e) {
             System.out.println("Error: " + e.getMessage());
+        }
+    }
+
+    private static void viewAllStudents() {
+        List<Student> students = studentService.getAllStudents();
+        if (students.isEmpty()) {
+            System.out.println("\n" + AppConstants.NO_STUDENTS);
+        } else {
+            System.out.println("\n--- All Students ---");
+            for (Student student : students) {
+                System.out.println("ID: " + student.getId() + " | " + student.getDisplayName() +
+                                 " | Batch: " + student.getBatch() + " | Active: " + student.isActive());
+            }
+        }
+    }
+
+    private static void viewAllCourses() {
+        List<Course> courses = courseService.getAllCourses();
+        if (courses.isEmpty()) {
+            System.out.println("\n" + AppConstants.NO_COURSES);
+        } else {
+            System.out.println("\n--- All Courses ---");
+            for (Course course : courses) {
+                System.out.println("ID: " + course.getId() + " | " + course.getCourseName() +
+                                 " | Duration: " + course.getDurationInWeeks() + " weeks | Status: " + course.getStatus() +
+                                 " | Trainer: " + (course.getTrainerId() == -1 ? "Not assigned" : course.getTrainerId()));
+            }
+        }
+    }
+
+    private static void viewAllTrainers() {
+        List<Trainer> trainers = trainerService.getAllTrainers();
+        if (trainers.isEmpty()) {
+            System.out.println("\nNo trainers found.");
+        } else {
+            System.out.println("\n--- All Trainers ---");
+            for (Trainer trainer : trainers) {
+                System.out.println("ID: " + trainer.getId() + " | " + trainer.getDisplayName() +
+                                 " | Specialization: " + trainer.getSpecialization() + " | Active: " + trainer.isActive());
+            }
         }
     }
 

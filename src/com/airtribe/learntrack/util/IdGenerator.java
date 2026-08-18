@@ -4,6 +4,7 @@ public class IdGenerator {
     private static int studentIdCounter = 0;
     private static int courseIdCounter = 0;
     private static int enrollmentIdCounter = 0;
+    private static int trainerIdCounter = 5000;
 
     public static int getNextStudentId() {
         return studentIdCounter++;
@@ -15,5 +16,9 @@ public class IdGenerator {
 
     public static int getNextEnrollmentId() {
         return enrollmentIdCounter++;
+    }
+
+    public static int getNextTrainerId() {
+        return trainerIdCounter++;
     }
 }
