@@ -4,6 +4,8 @@ import com.airtribe.learntrack.constants.AppConstants;
 import com.airtribe.learntrack.constants.MenuOptions;
 import com.airtribe.learntrack.entity.Student;
 import com.airtribe.learntrack.entity.Course;
+import com.airtribe.learntrack.entity.Enrollment;
+import com.airtribe.learntrack.enums.EnrollmentStatus;
 import com.airtribe.learntrack.repository.StudentRepository;
 import com.airtribe.learntrack.repository.CourseRepository;
 import com.airtribe.learntrack.repository.EnrollmentRepository;
@@ -47,9 +49,11 @@ public class Main {
         while (running) {
             System.out.println("1. Manage Students");
             System.out.println("2. Manage Courses");
-            System.out.println("3. View All Students");
-            System.out.println("4. View All Courses");
-            System.out.println("5. Exit");
+            System.out.println("3. Manage Enrollments");
+            System.out.println("4. View All Students");
+            System.out.println("5. View All Courses");
+            System.out.println("6. View All Enrollments");
+            System.out.println("7. Exit");
             System.out.print("Select option: ");
 
             try {
@@ -62,12 +66,18 @@ public class Main {
                         courseMenu();
                         break;
                     case 3:
-                        viewAllStudents();
+                        enrollmentMenu();
                         break;
                     case 4:
-                        viewAllCourses();
+                        viewAllStudents();
                         break;
                     case 5:
+                        viewAllCourses();
+                        break;
+                    case 6:
+                        viewAllEnrollments();
+                        break;
+                    case 7:
                         running = false;
                         System.out.println(AppConstants.GOODBYE_MESSAGE);
                         break;
@@ -226,6 +236,105 @@ public class Main {
             for (Course course : courses) {
                 System.out.println("ID: " + course.getId() + " | " + course.getCourseName() +
                                  " | Duration: " + course.getDurationInWeeks() + " weeks | Active: " + course.isActive());
+            }
+        }
+    }
+
+    private static void enrollmentMenu() {
+        System.out.println("\n--- Enrollment Management ---");
+        System.out.println("1. Enroll Student in Course");
+        System.out.println("2. View Enrollments for Student");
+        System.out.println("3. Update Enrollment Status");
+        System.out.println("4. Back");
+        System.out.print("Select: ");
+
+        try {
+            int choice = Integer.parseInt(scanner.nextLine());
+            switch (choice) {
+                case 1:
+                    enrollStudent();
+                    break;
+                case 2:
+                    viewStudentEnrollments();
+                    break;
+                case 3:
+                    updateEnrollmentStatus();
+                    break;
+                case 4:
+                    break;
+                default:
+                    System.out.println(AppConstants.INVALID_OPTION);
+            }
+        } catch (NumberFormatException e) {
+            System.out.println(AppConstants.INVALID_INPUT);
+        }
+    }
+
+    private static void enrollStudent() {
+        try {
+            System.out.print("Student ID: ");
+            int studentId = Integer.parseInt(scanner.nextLine());
+            System.out.print("Course ID: ");
+            int courseId = Integer.parseInt(scanner.nextLine());
+            System.out.print("Enrollment Date (YYYY-MM-DD): ");
+            String date = scanner.nextLine();
+
+            Enrollment enrollment = enrollmentService.enrollStudent(studentId, courseId, date);
+            System.out.println(AppConstants.ENROLLMENT_ADDED + enrollment.getId());
+        } catch (NumberFormatException e) {
+            System.out.println(AppConstants.INVALID_INPUT);
+        } catch (EntityNotFoundException | InvalidInputException e) {
+            System.out.println("Error: " + e.getMessage());
+        }
+    }
+
+    private static void viewStudentEnrollments() {
+        try {
+            System.out.print("Enter Student ID: ");
+            int studentId = Integer.parseInt(scanner.nextLine());
+            List<Enrollment> enrollments = enrollmentService.getEnrollmentsForStudent(studentId);
+
+            if (enrollments.isEmpty()) {
+                System.out.println("\nNo enrollments found for this student.");
+            } else {
+                System.out.println("\n--- Enrollments for Student " + studentId + " ---");
+                for (Enrollment enrollment : enrollments) {
+                    System.out.println("ID: " + enrollment.getId() + " | Course ID: " + enrollment.getCourseId() +
+                                     " | Date: " + enrollment.getEnrollmentDate() + " | Status: " + enrollment.getStatus());
+                }
+            }
+        } catch (NumberFormatException e) {
+            System.out.println(AppConstants.INVALID_INPUT);
+        } catch (EntityNotFoundException e) {
+            System.out.println("Error: " + e.getMessage());
+        }
+    }
+
+    private static void updateEnrollmentStatus() {
+        try {
+            System.out.print("Enrollment ID: ");
+            int enrollmentId = Integer.parseInt(scanner.nextLine());
+            System.out.print("New Status (ACTIVE/COMPLETED/CANCELLED): ");
+            String status = scanner.nextLine();
+
+            enrollmentService.updateEnrollmentStatus(enrollmentId, status);
+            System.out.println(AppConstants.ENROLLMENT_UPDATED);
+        } catch (NumberFormatException e) {
+            System.out.println(AppConstants.INVALID_INPUT);
+        } catch (EntityNotFoundException | InvalidInputException e) {
+            System.out.println("Error: " + e.getMessage());
+        }
+    }
+
+    private static void viewAllEnrollments() {
+        List<Enrollment> enrollments = enrollmentService.getAllEnrollments();
+        if (enrollments.isEmpty()) {
+            System.out.println("\n" + AppConstants.NO_ENROLLMENTS);
+        } else {
+            System.out.println("\n--- All Enrollments ---");
+            for (Enrollment enrollment : enrollments) {
+                System.out.println("ID: " + enrollment.getId() + " | Student ID: " + enrollment.getStudentId() +
+                                 " | Course ID: " + enrollment.getCourseId() + " | Status: " + enrollment.getStatus());
             }
         }
     }
