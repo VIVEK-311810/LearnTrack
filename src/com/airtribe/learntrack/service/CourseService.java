@@ -11,8 +11,8 @@ import java.util.List;
 public class CourseService {
     private CourseRepository repository;
 
-    public CourseService() {
-        this.repository = new CourseRepository();
+    public CourseService(CourseRepository repository) {
+        this.repository = repository;
     }
 
     public Course addCourse(String courseName, String description, int durationInWeeks) throws InvalidInputException {

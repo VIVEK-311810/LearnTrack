@@ -11,8 +11,8 @@ import java.util.List;
 public class StudentService {
     private StudentRepository repository;
 
-    public StudentService() {
-        this.repository = new StudentRepository();
+    public StudentService(StudentRepository repository) {
+        this.repository = repository;
     }
 
     public Student addStudent(String firstName, String lastName, String email, String batch) throws InvalidInputException {
